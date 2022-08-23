@@ -20,17 +20,15 @@ export class SeedService {
   async executeSeed(){
    await  this.pokemonModel.deleteMany();
     const { data } = await axios.get<PokeResponse>(this.axiosUrl);
-    const insertPromiseArray = [];
+    const pokemonToInsert :{name:string , no:number}[]= [];
     data.results.forEach( ({name,url})=>{
       const segments = url.split('/')
       const no = +segments[segments.length -2];
       console.log(name, no)
-      insertPromiseArray.push(
-       this.pokemonModel.create({name, no})
-      )
+      pokemonToInsert.push({name, no})
     })
 
-    const newArry = await Promise.all(insertPromiseArray)
+    await this.pokemonModel.insertMany(pokemonToInsert);
     return 'Seed executed'
   }
 }
