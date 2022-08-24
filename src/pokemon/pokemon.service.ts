@@ -9,12 +9,13 @@ import { Pokemon } from './entities/pokemon.entity';
 
 @Injectable()
 export class PokemonService {
+  private defaultLimit : number
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel : Model<Pokemon>,
     private readonly configService: ConfigService
   ){
-    
+   this.defaultLimit =  this.configService.getOrThrow('defaultLimit');
   }
 
 
@@ -30,10 +31,10 @@ export class PokemonService {
   }
 
   findAll(queryParameter : PaginationDto ) {
-    //this.configService.getOrThrow('defaultLimit'), 
-    const { limit = 7, 
+    
+    const { limit = this.defaultLimit,
             offset= 0 } = queryParameter
-            console.log('Hola')
+            
     return this.pokemonModel.find()
     .limit(limit)
     .skip(offset)
